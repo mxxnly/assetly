@@ -1,113 +1,183 @@
 :root {
-    --bg-body: #020617; /* Дуже темний синій */
-    --accent-blue: #3b82f6; /* Яскравий синій */
+    --bg-body: #020617;
+    --accent-blue: #3b82f6;
+    --accent-hover: #2563eb;
     --accent-glow: rgba(59, 130, 246, 0.5);
-    
-    /* Скло */
-    --glass-bg: rgba(15, 23, 42, 0.6);
-    --glass-border: rgba(59, 130, 246, 0.2);
+    --glass-bg: rgba(15, 23, 42, 0.65);
+    --glass-border: rgba(255, 255, 255, 0.08);
     --glass-blur: 16px;
-    
     --text-main: #f8fafc;
-    --text-secondary: #94a3b8;
+    --text-muted: #ccd3dd !important;
+    --card-radius: 20px;
+    --btn-radius: 12px;
 }
 
 body {
     background-color: var(--bg-body);
-    /* Глибокий радіальний градієнт для фону */
     background-image: 
-        radial-gradient(circle at 50% 0%, rgba(29, 78, 216, 0.15), transparent 50%),
+        radial-gradient(circle at 50% 0%, rgba(59, 130, 246, 0.15), transparent 60%),
         radial-gradient(circle at 100% 0%, rgba(6, 182, 212, 0.1), transparent 50%);
     background-attachment: fixed;
     color: var(--text-main);
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
-/* --- NAVBAR --- */
-.navbar {
-    background-color: var(--glass-bg) !important;
-    backdrop-filter: blur(var(--glass-blur));
-    -webkit-backdrop-filter: blur(var(--glass-blur));
-    border-bottom: 1px solid var(--glass-border);
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-}
-
-.navbar-brand {
-    font-weight: 700;
-    color: var(--text-main) !important;
-    text-shadow: 0 0 10px var(--accent-glow);
-}
-
-.nav-link {
-    color: var(--text-secondary) !important;
-    transition: color 0.3s ease;
-}
-
-.nav-link:hover, .nav-link.active {
-    color: var(--accent-blue) !important;
-}
-
-/* --- CARDS (Як на скріншоті) --- */
-.card {
+.portfolio-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
     background: var(--glass-bg);
     border: 1px solid var(--glass-border);
-    border-radius: 16px; /* Закруглені кути */
-    color: var(--text-main);
-    backdrop-filter: blur(10px);
+    border-radius: var(--card-radius);
+    backdrop-filter: blur(12px);
     transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-.card:hover {
+.portfolio-card:hover {
     transform: translateY(-5px);
-    border-color: var(--accent-blue);
-    box-shadow: 0 10px 40px -10px rgba(59, 130, 246, 0.3);
+    border-color: rgba(59, 130, 246, 0.4);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
 }
 
-/* Заголовки карток */
-.card-header, .card-footer {
-    border-color: var(--glass-border);
-    background: transparent;
+.portfolio-card .card-body {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    padding: 1.5rem;
 }
 
-/* --- FOOTER --- */
-footer {
-    background-color: rgba(2, 6, 23, 0.95);
-    border-top: 1px solid var(--glass-border) !important;
-    color: var(--text-secondary);
-    backdrop-filter: blur(10px);
+.portfolio-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    font-size: 1.1rem;
+    font-weight: 700;
+    line-height: 1.4;
+    color: var(--text-main) !important;
+    margin-bottom: 1.5rem;
+    min-height: 3.5rem;
 }
 
-/* --- ELEMENTS --- */
-.dropdown-menu {
-    background-color: #0f172a;
-    border: 1px solid var(--glass-border);
+.portfolio-badge {
+    white-space: nowrap;
+    margin-left: 10px;
+    font-size: 0.85rem;
+    padding: 4px 10px;
+    border-radius: 8px;
+    background: rgba(59, 130, 246, 0.15);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    color: #fff;
 }
 
-.dropdown-item {
-    color: var(--text-main);
+.vstack {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    flex: 1 1 auto;
 }
 
-.dropdown-item:hover {
-    background-color: rgba(59, 130, 246, 0.1);
+.asset-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 12px 14px;
+    transition: all 0.2s;
+    gap: 15px;
+}
+
+.asset-item > div:first-child {
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+}
+
+.asset-icon {
+    font-size: 1.2rem;
+    margin-right: 10px;
+    flex-shrink: 0;
+}
+
+.asset-name {
+    color: var(--text-muted);
+    font-weight: 500;
+    font-size: 0.9rem;
+    line-height: 1.2;
+    white-space: normal;
+    text-align: left;
+}
+
+.asset-value {
+    font-weight: 700;
+    color: white;
+    font-family: 'Inter', monospace;
+    white-space: nowrap;
+    flex-shrink: 0;
+    text-align: right;
+    font-size: 0.95rem;
+}
+
+.portfolio-card .mt-4 {
+    margin-top: auto !important;
+    padding-top: 1.5rem;
+    width: 100%;
+}
+
+.btn-outline-secondary {
+    width: 100%;
+    border: 1px solid rgba(59, 130, 246, 0.3);
     color: var(--accent-blue);
+    background: transparent;
+    padding: 10px;
+    border-radius: var(--btn-radius);
+    transition: all 0.2s;
 }
 
-/* Перевизначення кнопок Bootstrap */
-.btn-primary {
-    background-color: var(--accent-blue);
+.btn-outline-secondary:hover {
+    background: rgba(59, 130, 246, 0.1);
     border-color: var(--accent-blue);
-    box-shadow: 0 0 15px rgba(59, 130, 246, 0.4);
+    color: white;
+    box-shadow: 0 0 15px rgba(59, 130, 246, 0.2);
 }
 
-.btn-primary:hover {
-    background-color: #2563eb;
-    border-color: #2563eb;
-    box-shadow: 0 0 25px rgba(59, 130, 246, 0.6);
+.total-wealth-title {
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-muted);
 }
 
-/* Alert styles adjustments */
-.alert {
-    background-color: rgba(15, 23, 42, 0.9);
-    border: 1px solid var(--glass-border);
-    color: var(--text-main);
+.total-wealth-amount {
+    font-size: 3rem;
+    font-weight: 800;
+    color: white;
+    text-shadow: 0 0 30px rgba(59, 130, 246, 0.4);
+}
+
+@media (max-width: 768px) {
+    .portfolio-title {
+        min-height: auto;
+        font-size: 1rem;
+    }
+    
+    .total-wealth-amount {
+        font-size: 2.2rem;
+    }
+    
+    .asset-item {
+        padding: 10px;
+    }
+    
+    .asset-name {
+        font-size: 0.85rem;
+    }
+    
+    .asset-value {
+        font-size: 0.9rem;
+    }
 }
