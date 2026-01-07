@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Головна{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="row mb-5 mt-3">
+    <div class="col-12 text-center">
+        <h4 class="total-wealth-title">Загальний капітал</h4>
+        <h1 class="display-3 total-wealth-amount">
+            {{ total_wealth|floatformat:2 }} 
+            <span class="fs-4 currency-symbol">₴</span>
+        </h1>
+    </div>
+</div>
+
+<div class="row">
+    {% for portfolio in portfolios %}
+    <div class="col-md-6 col-lg-4 mb-4">
+        <div class="card h-100 p-3 portfolio-card">
+            <div class="card-body">
+                
+                <h5 class="card-title d-flex justify-content-between align-items-center mb-4 portfolio-title">
+                    {{ portfolio.name }}
+                    <span class="badge portfolio-badge">
+                        Σ {{ portfolio.get_total_balance|floatformat:0 }}
+                    </span>
+                </h5>
+
+                <div class="vstack gap-3">
+                    {% for item in portfolio.items.all %}
+                        <div class="asset-item">
+                            
+                            <div class="d-flex align-items-center">
+                                <span class="asset-icon">
+                                    {% if item.type == 'cash' %}💵
+                                    {% else %}💳{% endif %}
+                                </span>
+                                <span class="asset-name">{{ item.get_type_display }}</span>
+                            </div>
+
+                            <div class="asset-value">
+                                {{ item.balance|floatformat:2 }} ₴
+                            </div>
+                        </div>
+                    {% empty %}
+                        <p class="text-muted small text-center my-3">Рахунки ще не додані</p>
+                    {% endfor %}
+                </div>
+                
+                <div class="mt-4 text-center">
+                    <a href="#" class="btn btn-outline-primary btn-sm px-4 py-2">Переглянути портфоліо</a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    
+    <div class="col-12 text-center mt-5">
+        <p class="empty-state-text">У вас поки немає створених портфоліо.</p>
+        <a href="#" class="btn btn-primary px-4 py-2">Створити перше портфоліо</a>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

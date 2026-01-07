@@ -1,0 +1,108 @@
+/* --- static/css/dashboard.css --- */
+
+/* 1. Головний баланс (Велика цифра) */
+.total-wealth-title {
+    font-size: 1.2rem;
+    color: var(--text-muted);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.total-wealth-amount {
+    font-weight: 800;
+    color: white;
+    /* Неонове світіння тексту */
+    text-shadow: 0 0 25px rgba(59, 130, 246, 0.6);
+    margin-top: 0.5rem;
+}
+
+.currency-symbol {
+    color: var(--text-muted);
+    font-size: 2rem; /* Трохи менше за основну цифру */
+    vertical-align: middle;
+}
+
+/* 2. Картка портфоліо */
+.portfolio-card {
+    /* Наслідує глобальні стилі картки, але можна уточнити тут */
+    height: 100%;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.portfolio-title {
+    color: var(--primary-blue); /* Використовуємо змінну з auth.css/main.css */
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.portfolio-badge {
+    background-color: rgba(59, 130, 246, 0.2); /* Напівпрозорий синій */
+    color: #fff;
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    font-weight: 500;
+    padding: 6px 12px;
+    border-radius: 8px;
+    backdrop-filter: blur(4px);
+}
+
+/* 3. Рядок активу (Asset Item Row) */
+.asset-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    border-radius: 12px;
+    
+    /* Темний напівпрозорий фон замість інлайнового styles */
+    background: rgba(255, 255, 255, 0.03); 
+    border: 1px solid transparent;
+    
+    transition: all 0.2s ease;
+}
+
+/* Ефект при наведенні на рядок (підсвітка) */
+.asset-item:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.1);
+    transform: translateX(4px); /* Легкий зсув вправо */
+}
+
+.asset-icon {
+    margin-right: 12px;
+    font-size: 1.2rem;
+}
+
+.asset-name {
+    color: #e2e8f0;
+    font-weight: 500;
+}
+
+.asset-value {
+    font-weight: 700;
+    color: white;
+    font-family: 'Inter', monospace; /* Щоб цифри були рівними */
+}
+
+/* 4. Кнопка додавання (Dashed Button) */
+.btn-dashed {
+    width: 100%;
+    border: 1px dashed var(--text-muted); /* Пунктирна рамка */
+    color: var(--text-muted);
+    background: transparent;
+    padding: 10px;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.btn-dashed:hover {
+    border-color: var(--primary-blue);
+    color: var(--primary-blue);
+    background: rgba(59, 130, 246, 0.1);
+    box-shadow: 0 0 15px rgba(59, 130, 246, 0.2);
+}
+
+/* Порожній стан (Empty State) */
+.empty-state-text {
+    color: var(--text-muted);
+    margin-bottom: 20px;
+}

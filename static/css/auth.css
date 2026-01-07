@@ -1,0 +1,211 @@
+/* --- static/css/auth.css --- */
+
+:root {
+    /* Палітра кольорів */
+    --bg-deep: #020617;                 /* Глибокий чорно-синій */
+    --glass-bg: rgba(30, 41, 59, 0.4);  /* Напівпрозорий фон карток */
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --primary-blue: #3b82f6;            /* Основний акцент */
+    --primary-glow: rgba(59, 130, 246, 0.5);
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --error-red: #ef4444;
+}
+
+/* 1. ГЛОБАЛЬНІ НАЛАШТУВАННЯ СТОРІНКИ */
+body {
+    background-color: var(--bg-deep);
+    /* Складний градієнт для ефекту "Deep Space" */
+    background-image: 
+        radial-gradient(circle at 15% 50%, rgba(59, 130, 246, 0.08), transparent 25%),
+        radial-gradient(circle at 85% 30%, rgba(124, 58, 237, 0.08), transparent 25%);
+    background-attachment: fixed;
+    color: var(--text-main);
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    min-height: 100vh;
+}
+
+/* Центрування картки по центру екрана */
+.auth-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 85vh; /* Трохи менше 100, щоб футер не заважав */
+    padding: 20px;
+}
+
+/* 2. СКЛЯНА КАРТКА (GLASSMORPHISM) */
+.auth-card {
+    width: 100%;
+    max-width: 400px; /* Оптимальна ширина */
+    
+    background: var(--glass-bg);
+    backdrop-filter: blur(16px);       /* Ефект розмиття фону */
+    -webkit-backdrop-filter: blur(16px);
+    
+    border: 1px solid var(--glass-border);
+    border-radius: 24px;
+    padding: 40px;
+    
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); /* Глибока тінь */
+    position: relative;
+    overflow: hidden;
+}
+
+/* Тонка лінія підсвітки зверху */
+.auth-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--primary-glow), transparent);
+}
+
+.auth-title {
+    text-align: center;
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 2rem;
+    /* Градієнтний текст */
+    background: linear-gradient(to right, #fff, #cbd5e1);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* 3. СТИЛІЗАЦІЯ INPUTS (ГЛОБАЛЬНО) */
+/* Звертаємось до всіх текстових полів, незалежно від класів */
+input[type="text"],
+input[type="password"],
+input[type="email"],
+input[type="number"],
+textarea,
+select {
+    display: block;
+    width: 100%;
+    padding: 12px 16px;
+    margin-bottom: 15px; /* Відступ знизу */
+    
+    font-size: 1rem;
+    color: var(--text-main);
+    
+    /* Темний фон */
+    background-color: rgba(15, 23, 42, 0.6);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+/* Плейсхолдер (підказка) */
+input::placeholder {
+    color: rgba(148, 163, 184, 0.4);
+}
+
+/* Стан наведення */
+input:hover {
+    background-color: rgba(30, 41, 59, 0.8);
+    border-color: rgba(148, 163, 184, 0.3);
+}
+
+/* Стан фокусу (активне поле) - НЕОН */
+input:focus {
+    background-color: rgba(15, 23, 42, 0.95);
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15); /* Синє світіння */
+    transform: translateY(-1px);
+}
+
+/* --- FIX: Прибираємо білий фон автозаповнення Chrome --- */
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus, 
+input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 1000px #0f172a inset !important;
+    -webkit-text-fill-color: white !important;
+    caret-color: white;
+    transition: background-color 5000s ease-in-out 0s;
+}
+
+/* 4. ЛЕЙБЛИ (Labels) */
+label {
+    display: block;
+    margin-bottom: 6px;
+    margin-left: 4px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    letter-spacing: 0.5px;
+}
+
+/* 5. КНОПКА (Submit Button) */
+button[type="submit"] {
+    width: 100%;
+    padding: 14px;
+    margin-top: 10px;
+    
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    color: white;
+    font-weight: 600;
+    font-size: 1rem;
+    border: none;
+    border-radius: 12px;
+    
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+}
+
+button[type="submit"]:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(59, 130, 246, 0.5);
+    filter: brightness(1.1);
+}
+
+/* 6. ДОДАТКОВІ ЕЛЕМЕНТИ */
+
+/* Посилання внизу (Зареєструватися) */
+.auth-footer {
+    margin-top: 1.5rem;
+    text-align: center;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    border-top: 1px solid var(--glass-border);
+    padding-top: 1.5rem;
+}
+
+.auth-footer a {
+    color: #60a5fa;
+    text-decoration: none;
+    font-weight: 500;
+    margin-left: 5px;
+    transition: color 0.2s;
+}
+
+.auth-footer a:hover {
+    color: #93c5fd;
+    text-decoration: underline;
+}
+
+/* Блок помилок */
+.alert-danger, .errorlist {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    color: #fca5a5;
+    padding: 12px;
+    border-radius: 10px;
+    margin-bottom: 1.5rem;
+    list-style: none;
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+/* Help text (підказки під паролем) */
+.helptext {
+    font-size: 0.75rem;
+    color: #64748b;
+    margin-top: -10px; /* Підтягуємо ближче до поля */
+    margin-bottom: 15px;
+    display: block;
+    line-height: 1.3;
+}
