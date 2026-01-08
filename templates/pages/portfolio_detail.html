@@ -22,27 +22,15 @@
             </div>
             
             <div class="header-actions d-flex align-items-center gap-2">
-                <button type="button" 
-                        class="btn btn-glass-icon" 
-                        data-bs-toggle="modal" 
-                        data-bs-target="#editPortfolioModal" 
-                        title="Налаштування портфоліо">
+                <button type="button" class="btn btn-glass-icon" data-bs-toggle="modal" data-bs-target="#editPortfolioModal" title="Налаштування">
                     ⚙️
                 </button>
 
-                <button type="button" 
-                        class="btn btn-glass-icon" 
-                        style="width: auto; padding: 0 15px; font-size: 1.2rem;"
-                        data-bs-toggle="modal" 
-                        data-bs-target="#addTransferModal"
-                        title="Зробити переказ">
+                <button type="button" class="btn btn-glass-icon" style="width: auto; padding: 0 15px; font-size: 1.2rem;" data-bs-toggle="modal" data-bs-target="#addTransferModal" title="Переказ">
                     ⇄
                 </button>
                 
-                <button type="button" 
-                        class="btn btn-primary shadow-lg" 
-                        data-bs-toggle="modal" 
-                        data-bs-target="#addTransactionModal">
+                <button type="button" class="btn btn-primary shadow-lg" data-bs-toggle="modal" data-bs-target="#addTransactionModal">
                     + Транзакція
                 </button>
             </div>
@@ -63,11 +51,9 @@
             </div>
             {% endfor %}
             
-            <button type="button" 
-                    class="mini-asset-card d-flex align-items-center justify-content-center text-decoration-none border-0 w-100" 
+            <button type="button" class="mini-asset-card d-flex align-items-center justify-content-center text-decoration-none border-0 w-100" 
                     style="min-height: 100px; cursor: pointer; opacity: 0.7;"
-                    data-bs-toggle="modal" 
-                    data-bs-target="#addBalanceItemModal">
+                    data-bs-toggle="modal" data-bs-target="#addBalanceItemModal">
                 <span class="fs-1" style="color: var(--text-muted)">+</span>
             </button>
         </div>
@@ -94,7 +80,9 @@
                     </div>
                     
                     <div class="tx-info">
-                        <div class="text-white fw-bold">{{ tx.get_category_display }}</div>
+                        <div class="text-white fw-bold">
+                            {{ tx.category.name|default:"Без категорії" }}
+                        </div>
                         
                         <div class="small" style="color: rgba(255, 255, 255, 0.6);">
                             {{ tx.created_at|date:"d.m H:i" }} • 
@@ -121,7 +109,6 @@
                     </div>
 
                     <div class="tx-actions">
-                        
                         {% if tx.type != 'transfer' %}
                             <button type="button" 
                                     class="btn-glass-icon"
@@ -132,20 +119,35 @@
                                     data-amount="{{ tx.amount|stringformat:'.2f' }}"
                                     data-description="{{ tx.description }}"
                                     data-type="{{ tx.type }}"
-                                    data-category="{{ tx.category }}"
+                                    data-category-id="{{ tx.category.id }}"
                                     data-date="{{ tx.created_at|date:'Y-m-d\TH:i' }}"
                                     title="Редагувати">
+                                ✎
+                            </button>
+                        {% else %}
+                             <button type="button" 
+                                    class="btn-glass-icon"
+                                    style="width: 32px; height: 32px;"
+                                    data-bs-toggle="modal" 
+                                    data-bs-target="#editTransferModal"
+                                    data-id="{{ tx.pk }}"
+                                    data-amount="{{ tx.amount|stringformat:'.2f' }}"
+                                    data-description="{{ tx.description }}"
+                                    data-from="{{ tx.from_asset.id }}"
+                                    data-to="{{ tx.to_asset.id }}"
+                                    data-date="{{ tx.created_at|date:'Y-m-d\TH:i' }}"
+                                    title="Редагувати переказ">
                                 ✎
                             </button>
                         {% endif %}
 
                         {% if tx.type == 'transfer' %}
-                            <form action="{% url 'transfer_delete' tx.pk %}" method="post" onsubmit="return confirm('Скасувати цей переказ? Кошти повернуться на рахунок.');" style="display:inline;">
+                             <form action="{% url 'transfer_delete' tx.pk %}" method="post" onsubmit="return confirm('Скасувати цей переказ?');" style="display:inline;">
                                 {% csrf_token %}
-                                <button type="submit" class="btn-glass-icon text-danger" style="width: 32px; height: 32px; border-color: rgba(239, 68, 68, 0.3);" title="Скасувати переказ">✕</button>
+                                <button type="submit" class="btn-glass-icon text-danger" style="width: 32px; height: 32px; border-color: rgba(239, 68, 68, 0.3);" title="Скасувати">✕</button>
                             </form>
                         {% else %}
-                            <form action="{% url 'transaction_delete' tx.pk %}" method="post" onsubmit="return confirm('Видалити цю транзакцію?');" style="display:inline;">
+                            <form action="{% url 'transaction_delete' tx.pk %}" method="post" onsubmit="return confirm('Видалити цей запис?');" style="display:inline;">
                                 {% csrf_token %}
                                 <button type="submit" class="btn-glass-icon text-danger" style="width: 32px; height: 32px; border-color: rgba(239, 68, 68, 0.3);" title="Видалити">✕</button>
                             </form>
@@ -160,124 +162,6 @@
                 <p>Транзакцій поки немає</p>
             </div>
         {% endfor %}
-    </div>
-</div>
-
-<div class="modal fade" id="addTransactionModal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content glass-modal">
-            <div class="modal-header border-bottom-0">
-                <h5 class="modal-title text-white">Нова транзакція</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form action="{% url 'transaction_add' portfolio.id %}" method="post">
-                {% csrf_token %}
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label class="form-label small">Тип операції</label>
-                        <select name="type" class="form-control-custom">
-                            <option value="expense" selected>Витрата</option>
-                            <option value="income">Дохід</option>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label small">З якого рахунку?</label>
-                        <select name="asset_id" class="form-control-custom" required>
-                            {% for asset in portfolio.items.all %}
-                                <option value="{{ asset.id }}">
-                                    {{ asset.get_type_display }} ({{ asset.balance|floatformat:0 }} ₴)
-                                </option>
-                            {% empty %}
-                                <option disabled>Спочатку створіть рахунок!</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label small">Категорія</label>
-                        <select name="category" class="form-control-custom">
-                            <option value="food">Їжа та продукти</option>
-                            <option value="transport">Транспорт</option>
-                            <option value="entertainment">Розваги</option>
-                            <option value="utilities">Комунальні</option>
-                            <option value="shopping">Шопінг</option>
-                            <option value="apartment">Дім</option>
-                            <option value="transfer">Переказ</option>
-                            <option value="salary">Зарплата</option>
-                            <option value="other">Інше</option>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label small">Сума</label>
-                        <input type="number" step="0.01" name="amount" class="form-control-custom" placeholder="0.00" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label small">Дата</label>
-                        <input type="datetime-local" name="created_at" class="form-control-custom">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label small">Коментар</label>
-                        <textarea name="description" rows="2" class="form-control-custom"></textarea>
-                    </div>
-                </div>
-                <div class="modal-footer border-top-0">
-                    <button type="button" class="btn btn-dashed w-auto" data-bs-dismiss="modal">Скасувати</button>
-                    <button type="submit" class="btn btn-primary">Додати</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-<div class="modal fade" id="editTransactionModal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content glass-modal">
-            <div class="modal-header border-bottom-0">
-                <h5 class="modal-title text-white">Редагувати транзакцію</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form method="post" id="editTransactionForm">
-                {% csrf_token %}
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label class="form-label small">Тип операції</label>
-                        <select name="type" id="modal_type" class="form-control-custom">
-                            <option value="expense">Витрата</option>
-                            <option value="income">Дохід</option>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label small">Категорія</label>
-                        <select name="category" id="modal_category" class="form-control-custom">
-                            <option value="food">Їжа та продукти</option>
-                            <option value="transport">Транспорт</option>
-                            <option value="entertainment">Розваги</option>
-                            <option value="utilities">Комунальні</option>
-                            <option value="shopping">Шопінг</option>
-                            <option value="apartment">Дім</option>
-                            <option value="transfer">Переказ</option>
-                            <option value="salary">Зарплата</option>
-                            <option value="other">Інше</option>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label small">Сума</label>
-                        <input type="number" step="0.01" name="amount" id="modal_amount" class="form-control-custom" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label small">Дата</label>
-                        <input type="datetime-local" name="created_at" id="modal_date" class="form-control-custom">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label small">Коментар</label>
-                        <textarea name="description" id="modal_description" rows="2" class="form-control-custom"></textarea>
-                    </div>
-                </div>
-                <div class="modal-footer border-top-0">
-                    <button type="button" class="btn btn-dashed w-auto" data-bs-dismiss="modal">Скасувати</button>
-                    <button type="submit" class="btn btn-primary">Зберегти</button>
-                </div>
-            </form>
-        </div>
     </div>
 </div>
 
@@ -325,9 +209,6 @@
                                 Готівка {% if "cash" in existing_types %}(Вже є){% endif %}
                             </option>
                         </select>
-                        {% if "bank" in existing_types and "cash" in existing_types %}
-                            <div class="text-danger small mt-1">Ви створили всі можливі типи рахунків.</div>
-                        {% endif %}
                     </div>
                     <div class="mb-3">
                         <label class="form-label small">Початковий баланс</label>
@@ -343,6 +224,114 @@
     </div>
 </div>
 
+<div class="modal fade" id="addTransactionModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content glass-modal">
+            <div class="modal-header border-bottom-0">
+                <h5 class="modal-title text-white">Нова транзакція</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{% url 'transaction_add' portfolio.id %}" method="post">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label small">Тип операції</label>
+                        <select name="type" class="form-control-custom">
+                            <option value="expense" selected>Витрата</option>
+                            <option value="income">Дохід</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small">З якого рахунку?</label>
+                        <select name="asset_id" class="form-control-custom" required>
+                            {% for asset in portfolio.items.all %}
+                                <option value="{{ asset.id }}">
+                                    {{ asset.get_type_display }} ({{ asset.balance|floatformat:0 }} ₴)
+                                </option>
+                            {% empty %}
+                                <option disabled>Спочатку створіть рахунок!</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small">Категорія</label>
+                        <select name="category" class="form-control-custom">
+                            <option value="" selected>-----</option>
+                            {% for cat in categories %}
+                                <option value="{{ cat.id }}">{{ cat.icon }} {{ cat.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small">Сума</label>
+                        <input type="number" step="0.01" name="amount" class="form-control-custom" placeholder="0.00" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small">Дата</label>
+                        <input type="datetime-local" name="created_at" class="form-control-custom">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small">Коментар</label>
+                        <textarea name="description" rows="2" class="form-control-custom"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer border-top-0">
+                    <button type="button" class="btn btn-dashed w-auto" data-bs-dismiss="modal">Скасувати</button>
+                    <button type="submit" class="btn btn-primary">Додати</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="editTransactionModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content glass-modal">
+            <div class="modal-header border-bottom-0">
+                <h5 class="modal-title text-white">Редагувати транзакцію</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="post" id="editTransactionForm">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label small">Тип операції</label>
+                        <select name="type" id="modal_type" class="form-control-custom">
+                            <option value="expense">Витрата</option>
+                            <option value="income">Дохід</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small">Категорія</label>
+                        <select name="category" id="modal_category" class="form-control-custom">
+                            <option value="">-----</option>
+                            {% for cat in categories %}
+                                <option value="{{ cat.id }}">{{ cat.icon }} {{ cat.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small">Сума</label>
+                        <input type="number" step="0.01" name="amount" id="modal_amount" class="form-control-custom" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small">Дата</label>
+                        <input type="datetime-local" name="created_at" id="modal_date" class="form-control-custom">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small">Коментар</label>
+                        <textarea name="description" id="modal_description" rows="2" class="form-control-custom"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer border-top-0">
+                    <button type="button" class="btn btn-dashed w-auto" data-bs-dismiss="modal">Скасувати</button>
+                    <button type="submit" class="btn btn-primary">Зберегти</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <div class="modal fade" id="addTransferModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content glass-modal">
@@ -350,11 +339,9 @@
                 <h5 class="modal-title text-white">Переказ коштів</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            
             <form action="{% url 'transfer_add' portfolio.id %}" method="post">
                 {% csrf_token %}
                 <div class="modal-body">
-                    
                     <div class="mb-3">
                         <label class="form-label small" style="color:lightgray">Звідки (Поточне портфоліо)</label>
                         <select name="from_asset" class="form-control-custom" required>
@@ -396,7 +383,6 @@
                         <label class="form-label small" style="color:lightgray">Коментар</label>
                         <textarea name="description" rows="2" class="form-control-custom"></textarea>
                     </div>
-
                 </div>
                 <div class="modal-footer border-top-0">
                     <button type="button" class="btn btn-dashed w-auto" data-bs-dismiss="modal">Скасувати</button>
@@ -414,7 +400,6 @@
                 <h5 class="modal-title text-white">Редагувати переказ</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            
             <form method="post" id="editTransferForm">
                 {% csrf_token %}
                 <div class="modal-body">
@@ -461,43 +446,51 @@
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         
-        // 1. Редагування ТРАНЗАКЦІЙ
+        // 1. JS для модалки редагування ТРАНЗАКЦІЙ
         const editTransactionModal = document.getElementById('editTransactionModal');
         if (editTransactionModal) {
             editTransactionModal.addEventListener('show.bs.modal', function (event) {
                 const button = event.relatedTarget;
+                
+                // Заповнення полів даними з data-атрибутів кнопки
                 document.getElementById('modal_amount').value = button.getAttribute('data-amount').replace(',', '.');
                 document.getElementById('modal_description').value = button.getAttribute('data-description');
                 document.getElementById('modal_type').value = button.getAttribute('data-type');
-                document.getElementById('modal_category').value = button.getAttribute('data-category');
                 document.getElementById('modal_date').value = button.getAttribute('data-date');
                 
+                // Логіка вибору категорії
+                const categoryId = button.getAttribute('data-category-id');
+                const categorySelect = document.getElementById('modal_category');
+                if (categoryId && categoryId !== 'None') {
+                    categorySelect.value = categoryId;
+                } else {
+                    categorySelect.value = "";
+                }
+                
+                // Оновлення action форми
                 const id = button.getAttribute('data-id');
                 document.getElementById('editTransactionForm').action = `/transaction/${id}/update/`;
             });
         }
 
-        // 2. Редагування ПЕРЕКАЗІВ
+        // 2. JS для модалки редагування ПЕРЕКАЗІВ
         const editTransferModal = document.getElementById('editTransferModal');
         if (editTransferModal) {
             editTransferModal.addEventListener('show.bs.modal', function (event) {
                 const button = event.relatedTarget;
                 
-                // Заповнюємо поля даними
                 document.getElementById('edit_transfer_amount').value = button.getAttribute('data-amount').replace(',', '.');
                 document.getElementById('edit_transfer_desc').value = button.getAttribute('data-description');
                 document.getElementById('edit_transfer_from').value = button.getAttribute('data-from');
                 document.getElementById('edit_transfer_to').value = button.getAttribute('data-to');
                 document.getElementById('edit_transfer_date').value = button.getAttribute('data-date');
 
-                // Оновлюємо Action URL форми
                 const id = button.getAttribute('data-id');
-                // Переконайся, що в urls.py шлях саме такий
                 document.getElementById('editTransferForm').action = `/transfer/${id}/update/`;
             });
         }
 
-        // 3. Фільтри (Всі/Витрати/Доходи)
+        // 3. Фільтрація (Tabs)
         const tabs = document.querySelectorAll('.filter-tabs span');
         const rows = document.querySelectorAll('.transaction-row');
         tabs.forEach(tab => {
@@ -507,7 +500,6 @@
                 const filterValue = tab.getAttribute('data-filter');
                 rows.forEach(row => {
                     const rowType = row.getAttribute('data-type');
-                    // Для переказів (type='transfer') показуємо їх завжди або при виборі "Всі"
                     if (filterValue === 'all' || filterValue === rowType) {
                         row.style.display = 'flex';
                     } else {

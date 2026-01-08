@@ -40,27 +40,33 @@ class BalanceItem(models.Model):
     def __str__(self):
         return f"{self.get_type_display()}: {self.balance} (в {self.portfolio.name})"
 
+from django.db import models
+from django.utils import timezone
+
+class Category(models.Model):
+    name = models.CharField(max_length=100, unique=True, verbose_name="Назва категорії")
+    icon = models.CharField(max_length=50, blank=True, default='📦', verbose_name="Іконка (емодзі або клас)")
+    color = models.CharField(max_length=20, blank=True, default='secondary', verbose_name="Колір (Bootstrap клас)")
+
+    class Meta:
+        verbose_name = "Категорія"
+        verbose_name_plural = "Категорії"
+
+    def __str__(self):
+        return self.name
+
 class Transaction(models.Model):
     TRANSACTION_TYPES = [
         ('expense', 'Витрата'),
         ('income', 'Дохід'),
     ]
     
-    CATEGORY_CHOICES = [
-        ('food', 'Їжа та продукти'),
-        ('transport', 'Транспорт і пальне'),
-        ('entertainment', 'Розваги'),
-        ('utilities', 'Комунальні'),
-        ('shopping', 'Шопінг'),
-        ('apartment', 'Дім та оренда'),
-        ('transfer', 'Переказ'),
-        ('salary', 'Зарплата'),
-        ('other', 'Інше'),
-    ]
-
-    asset = models.ForeignKey(BalanceItem, on_delete=models.CASCADE, related_name='transactions', verbose_name="Рахунок")
+    # Зв'язки
+    asset = models.ForeignKey('BalanceItem', on_delete=models.CASCADE, related_name='transactions', verbose_name="Рахунок")
+    
+    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True, related_name='transactions', verbose_name="Категорія")
+    
     type = models.CharField(max_length=10, choices=TRANSACTION_TYPES, default='expense', verbose_name="Тип")
-    category = models.CharField(max_length=50, choices=CATEGORY_CHOICES, default="other", verbose_name="Категорія")
     amount = models.DecimalField(max_digits=12, decimal_places=2, verbose_name="Сума")
     description = models.TextField(blank=True, verbose_name="Коментар")
     created_at = models.DateTimeField(default=timezone.now, verbose_name="Дата операції")
@@ -72,29 +78,21 @@ class Transaction(models.Model):
 
     def __str__(self):
         sign = "-" if self.type == 'expense' else "+"
-        return f"{sign}{self.amount} ({self.get_category_display()})"
-
-    # --- МЕТОД SAVE ВИДАЛЕНО, ЩОБ НЕ БУЛО ПОДВІЙНОГО СПИСАННЯ ---
+        cat_name = self.category.name if self.category else "Без категорії"
+        return f"{sign}{self.amount} ({cat_name})"
 
     def get_ui_meta(self):
-        """
-        Повертає іконку та колір для відображення в шаблоні.
-        """
+
         if self.type == 'income':
             return {'icon': '💰', 'color': 'success'}
         
-        mapping = {
-            'food':          {'icon': '🍔', 'color': 'warning'},
-            'transport':     {'icon': '⛽', 'color': 'info'},
-            'entertainment': {'icon': '🎬', 'color': 'danger'},
-            'utilities':     {'icon': '💡', 'color': 'primary'},
-            'shopping':      {'icon': '🛍️', 'color': 'info'},
-            'apartment':     {'icon': '🏠', 'color': 'primary'},
-            'transfer':      {'icon': '💸', 'color': 'secondary'},
-            'salary':        {'icon': '💵', 'color': 'success'},
-            'other':         {'icon': '📦', 'color': 'secondary'},
-        }
-        return mapping.get(self.category, {'icon': '📦', 'color': 'secondary'})
+        if self.category:
+            return {
+                'icon': self.category.icon,
+                'color': self.category.color
+            }
+            
+        return {'icon': '📦', 'color': 'secondary'}
     
 
 class Transfer(models.Model):

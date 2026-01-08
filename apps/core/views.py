@@ -2,9 +2,9 @@ import decimal
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.db.models import Sum
-from .models import Portfolio, BalanceItem, Transaction, Transfer
+from .models import Portfolio, BalanceItem, Transaction, Transfer, Category
 from django.views.decorators.http import require_POST
-from .forms import TransactionForm, PortfolioForm, BalanceItemForm
+from .forms import TransactionForm, PortfolioForm, BalanceItemForm, CategoryForm
 from itertools import chain
 from operator import attrgetter
 from django.db.models import Q
@@ -23,11 +23,12 @@ def home(request):
         'portfolios': portfolios,
         'total_wealth': total_wealth,
         'total_credits_amount_remaining': total_credits_amount_remaining,
+        
     }
     return render(request, 'pages/home.html', context)
 def portfolio_detail(request, portfolio_id):
     portfolio = get_object_or_404(Portfolio, id=portfolio_id, user=request.user)
-    
+    categories = Category.objects.all()
     transactions = Transaction.objects.filter(asset__portfolio=portfolio)
     
     transfers = Transfer.objects.filter(
@@ -49,6 +50,7 @@ def portfolio_detail(request, portfolio_id):
         'transactions': combined_history,
         'existing_types': existing_types,
         'user_portfolios': user_portfolios,
+        'categories': categories,
     }
     return render(request, 'pages/portfolio_detail.html', context)
 
@@ -215,3 +217,14 @@ def create_portfolio(request):
     else:
         form = PortfolioForm()
     return render(request, 'pages/portfolio_form.html', {'form': form})
+
+@login_required
+def create_category(request):
+    if request.method == 'POST':
+        form = CategoryForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('home')
+    else:
+        form = CategoryForm()
+    return render(request, 'pages/category_form.html', {'form': form})

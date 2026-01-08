@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Portfolio, BalanceItem, Transaction, Transfer
+from .models import Portfolio, BalanceItem, Transaction, Transfer, Category
 
 class BalanceItemInline(admin.TabularInline):
     model = BalanceItem
@@ -16,3 +16,7 @@ class TransactionAdmin(admin.ModelAdmin):
 @admin.register(Transfer)
 class TransferAdmin(admin.ModelAdmin):
     list_display = ('from_asset', 'to_asset', 'amount', 'created_at')
+
+@admin.register(Category)
+class CategoryAdmin(admin.ModelAdmin):
+    list_display = ('name', 'icon', 'color')

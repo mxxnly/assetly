@@ -1,6 +1,7 @@
 from django.db import models
 from apps.core.models import BalanceItem
 from apps.core.models import Transaction
+from dateutil.relativedelta import relativedelta
 class Subscription(models.Model):
     CYCLE_CHOICES = [
         ('monthly', 'Щомісяця'),
@@ -74,20 +75,67 @@ class Credit(models.Model):
         return 0
     
 
+from django.core.exceptions import ValidationError
+
 class Payment(models.Model):
     TYPE_CHOICES = [
         ('subscription', 'Підписка'),
         ('credit', 'Кредит'),
     ]
-    type = models.CharField(max_length=30, choices=TYPE_CHOICES)
-    transaction = models.ForeignKey(Transaction, on_delete=models.CASCADE, related_name='subs_or_cred_payments')
+    
+    transaction = models.ForeignKey(Transaction, on_delete=models.CASCADE, related_name='payments')
+    payment_type = models.CharField(max_length=20, choices=TYPE_CHOICES, default='subscription')
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    subscription = models.ForeignKey(Subscription, on_delete=models.SET_NULL, null=True, blank=True, related_name='payments')
+    credit = models.ForeignKey(Credit, on_delete=models.SET_NULL, null=True, blank=True, related_name='payments')
+
     class Meta:
-        ordering = ['created_at']
-        verbose_name = "Платіж"
-        verbose_name_plural = "Платежі"
+        ordering = ['-created_at']
+        verbose_name = "Платіж по зобов'язаннях"
+        verbose_name_plural = "Платежі по зобов'язаннях"
 
     def __str__(self):
-        return f"{self.get_type_display()} - {self.amount} {self.transaction.currency} on {self.created_at}"
+        target = self.subscription.title if self.subscription else (self.credit.name if self.credit else "Unknown")
+        return f"{self.get_payment_type_display()}: {target} - {self.amount}"
+
+    def clean(self):
+        """Перевірка: платіж має бути прив'язаний або до кредиту, або до підписки, але не до обох одразу."""
+        if self.subscription and self.credit:
+            raise ValidationError("Платіж не може бути одночасно і за підписку, і за кредит.")
+        if not self.subscription and not self.credit:
+            raise ValidationError("Виберіть підписку або кредит.")
+    def calculate_next_payment_date(self):
+        current_next_date = self.subscription.next_payment_date
+        cycle = self.subscription.billing_cycle
+
+        if cycle == 'monthly':
+            return current_next_date + relativedelta(months=1)
+        elif cycle == 'yearly':
+            return current_next_date + relativedelta(years=1)
+        elif cycle == 'weekly':
+            return current_next_date + relativedelta(weeks=1)
+        
+        return current_next_date         
+    def save(self, *args, **kwargs):
+        is_new = self.pk is None
+        
+        if not self.payment_type:
+            if self.credit:
+                self.payment_type = 'credit'
+            elif self.subscription:
+                self.payment_type = 'subscription'
+
+        super().save(*args, **kwargs)
+
+        if is_new:
+            if self.credit:
+                self.credit.remaining_amount -= self.amount
+                if self.credit.remaining_amount < 0:
+                    self.credit.remaining_amount = 0
+                self.credit.save()
+
+            if self.subscription:
+                self.subscription.next_payment_date = self.calculate_next_payment_date()
+                self.subscription.save()

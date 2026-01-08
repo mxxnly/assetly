@@ -1,5 +1,5 @@
 from django import forms
-from .models import Transaction, Portfolio, BalanceItem, Transfer
+from .models import Transaction, Portfolio, BalanceItem, Transfer, Category
 
 class TransactionForm(forms.ModelForm):
     class Meta:
@@ -78,3 +78,14 @@ class TransferForm(forms.ModelForm):
             raise forms.ValidationError("Не можна робити переказ на той самий рахунок.")
         
         return cleaned_data
+    
+
+class CategoryForm(forms.ModelForm):
+    class Meta:
+        model = Category
+        fields = ['name', 'icon', 'color']
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control-custom'}),
+            'icon': forms.TextInput(attrs={'class': 'form-control-custom', 'placeholder': 'Емодзі або клас іконки'}),
+            'color': forms.TextInput(attrs={'class': 'form-control-custom', 'placeholder': 'Bootstrap клас кольору'}),
+        }
