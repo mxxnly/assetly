@@ -1,0 +1,161 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Боргова книга{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/debts_list.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-header mb-5 mt-4">
+    <div class="total-balance-container">
+        <h4 class="text-uppercase fw-bold mb-2 small tracking-wide">Чистий баланс</h4>
+        <h1 class="display-3 fw-bold mb-3">
+            <span class="{% if net_balance < 0 %}text-negative{% else %}text-positive{% endif %}">
+                {{ net_balance|floatformat:2 }}
+            </span>
+            <span class="currency">₴</span>
+        </h1>
+        
+        <div class="stats-pills">
+            <div class="stat-pill pill-green">
+                <span class="label">Вам винні:</span>
+                <span class="value">{{ total_owed_to_me|floatformat:0 }} ₴</span>
+            </div>
+            <div class="stat-pill pill-red">
+                <span class="label">Ви винні:</span>
+                <span class="value">{{ total_owed_by_me|floatformat:0 }} ₴</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    {% for debt in debts %}
+    <div class="col-md-6 col-lg-4">
+        <div class="glass-card h-100">
+            <div class="card-header-flex">
+                {% if debt.who_borrowed == 'i' %}
+                    <span class="status-badge status-negative">
+                        <i class="bi bi-arrow-down-circle-fill"></i> Я винен
+                    </span>
+                {% else %}
+                    <span class="status-badge status-positive">
+                        <i class="bi bi-arrow-up-circle-fill"></i> Мені винні
+                    </span>
+                {% endif %}
+                <span class="date-badge">{{ debt.created_at|date:"d.m.Y" }}</span>
+            </div>
+
+            <div class="card-content">
+                <div class="description-block">
+                    <div class="description-label">
+                        <i class="bi bi-text-left"></i> Коментар
+                    </div>
+                    <div class="description-text">
+                        {{ debt.description|default:"Опис відсутній" }}
+                    </div>
+                </div>
+
+                <div class="amount-display {% if debt.who_borrowed == 'i' %}border-negative{% else %}border-positive{% endif %}">
+                    {{ debt.amount|floatformat:2 }} ₴
+                </div>
+            </div>
+            
+            <div class="card-actions">
+                <button type="button" class="btn-glass btn-edit" data-bs-toggle="modal" data-bs-target="#editModal-{{ debt.id }}">
+                    <i class="bi bi-pencil-fill"></i>
+                </button>
+                <a href="{% url 'debt_delete' debt.id %}" class="btn-glass btn-delete">
+                    <i class="bi bi-trash-fill"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="editModal-{{ debt.id }}" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content glass-modal">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title fw-bold">Редагування</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form method="post" action="{% url 'debt_edit' debt.id %}">
+                    {% csrf_token %}
+                    <div class="modal-body">
+                        <div class="form-group mb-3">
+                            <label class="small mb-2" style="color: var(--text-muted)">Тип запису</label>
+                            <select name="who_borrowed" class="form-select glass-input">
+                                <option value="i" {% if debt.who_borrowed == 'i' %}selected{% endif %}>🔴 Я винен</option>
+                                <option value="other" {% if debt.who_borrowed == 'other' %}selected{% endif %}>🟢 Мені винні</option>
+                            </select>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label class="small mb-2" style="color: var(--text-muted)">Сума (₴)</label>
+                            <input type="number" step="0.01" name="amount" class="form-control glass-input" value="{{ debt.amount|stringformat:'.2f' }}" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="small mb-2" style="color: var(--text-muted)">Коментар</label>
+                            <textarea name="description" class="form-control glass-input" rows="3">{{ debt.description }}</textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-0">
+                        <button type="button" class="btn btn-outline-light btn-sm" data-bs-dismiss="modal">Скасувати</button>
+                        <button type="submit" class="btn btn-primary px-4">Зберегти</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+        <div class="empty-state">
+            <i class="bi bi-journal-album display-4 mb-3"></i>
+            <p>У вас поки немає записів про борги.</p>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="fab-container">
+    <button type="button" class="btn-fab" data-bs-toggle="modal" data-bs-target="#addDebtModal">
+        <i class="bi bi-plus-lg"></i> Додати
+    </button>
+</div>
+
+<div class="modal fade" id="addDebtModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content glass-modal">
+            <div class="modal-header border-0">
+                <h5 class="modal-title fw-bold">Новий борг</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="post" action="{% url 'debt_add' %}">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="form-group mb-3">
+                        <label class="small mb-2" style="color: var(--text-muted)">Тип запису</label>
+                        <select name="who_borrowed" class="form-select glass-input">
+                            <option value="i">🔴 Я винен</option>
+                            <option value="other">🟢 Мені винні</option>
+                        </select>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label class="small mb-2" style="color: var(--text-muted)">Сума (₴)</label>
+                        <input type="number" step="0.01" name="amount" class="form-control glass-input" placeholder="0.00" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="small mb-2" style="color: var(--text-muted)">Коментар</label>
+                        <textarea name="description" class="form-control glass-input" rows="3" placeholder="Деталі..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-outline-light btn-sm" data-bs-dismiss="modal">Скасувати</button>
+                    <button type="submit" class="btn btn-primary px-4">Створити</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -12,7 +12,7 @@
     <div class="col-12 text-center">
         <h4 class="total-wealth-title">Загальний капітал</h4>
         <h1 class="display-3 total-wealth-amount">
-            {{ total_wealth|floatformat:2 }} 
+            {{ total_wealth|floatformat:2 }}<span style="color: lightcoral; font-size: medium; vertical-align: top; "> - {{ total_credits_amount_remaining|floatformat:2 }}</span>
             <span class="fs-4 currency-symbol">₴</span>
         </h1>
     </div>
@@ -48,7 +48,7 @@
                             </div>
                         </div>
                     {% empty %}
-                        <p class="text-muted small text-center my-3">Рахунки ще не додані</p>
+                        <p class="small text-center my-3" style="color: var(--text-muted)">Рахунки ще не додані</p>
                     {% endfor %}
                 </div>
                 
@@ -63,7 +63,7 @@
     
     <div class="col-12 text-center mt-5">
         <p class="empty-state-text">У вас поки немає створених портфоліо.</p>
-        <a href="#" class="btn btn-primary px-4 py-2">Створити перше портфоліо</a>
+        <a href="{% url 'create_portfolio' %}" class="btn btn-primary px-4 py-2">Створити перше портфоліо</a>
     </div>
     {% endfor %}
 </div>

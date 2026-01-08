@@ -1,0 +1,179 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Підписки та Кредити{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/subs_credits.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="page-container">
+    
+    <section class="section-block">
+        <div class="section-header">
+            <h2 class="section-title">
+                <i class="bi bi-collection-play-fill icon-purple"></i>
+                Мої Підписки
+            </h2>
+            <button class="btn-icon-glass" data-bs-toggle="modal" data-bs-target="#addSubscriptionModal">
+                <i class="bi bi-plus-lg"></i>
+            </button>
+        </div>
+
+        <div class="cards-grid">
+            {% for sub in subscriptions %}
+            <div class="glass-card subscription-card">
+                <div class="card-top">
+                    <div class="icon-box">
+                        <i class="bi bi-credit-card-2-front"></i>
+                    </div>
+                    <div class="card-info">
+                        <h3 class="card-title">{{ sub.title }}</h3>
+                        <span class="cycle-badge">
+                            {{ sub.get_billing_cycle_display }}
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="card-main">
+                    <div class="amount-display">
+                        {{ sub.amount|floatformat:2 }} <span class="currency">{{ sub.currency }}</span>
+                    </div>
+                    <div class="next-date">
+                        <i class="bi bi-calendar-event"></i>
+                        {{ sub.next_payment_date|date:"d.m.Y" }}
+                    </div>
+                </div>
+
+                <div class="card-actions">
+                    <button class="btn-action" data-bs-toggle="modal" data-bs-target="#editSubModal-{{ sub.id }}">
+                        <i class="bi bi-pencil-fill"></i>
+                    </button>
+                    <a href="#" class="btn-action delete">
+                        <i class="bi bi-trash-fill"></i>
+                    </a>
+                </div>
+            </div>
+            {% empty %}
+            <div class="empty-state">
+                <p>Немає активних підписок</p>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section class="section-block mt-5">
+        <div class="section-header">
+            <h2 class="section-title">
+                <i class="bi bi-bank2 icon-orange"></i>
+                Кредитний портфель
+            </h2>
+            <button class="btn-icon-glass" data-bs-toggle="modal" data-bs-target="#addCreditModal">
+                <i class="bi bi-plus-lg"></i>
+            </button>
+        </div>
+
+        <div class="cards-grid">
+            {% for credit in credits %}
+            <div class="glass-card credit-card">
+                <div class="card-top">
+                    <div class="card-info w-100">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h3 class="card-title">{{ credit.name }}</h3>
+                            <span class="bank-name">{{ credit.bank_name }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-main">
+                    <div class="amount-group">
+                        <span class="label">Залишок боргу</span>
+                        <div class="amount-display text-warning">
+                            {{ credit.remaining_amount|floatformat:2 }} <span class="currency">{{ credit.currency }}</span>
+                        </div>
+                    </div>
+
+                    <div class="progress-container">
+                        <div class="progress-labels">
+                            <span>Погашено: {{ credit.progress_percentage|floatformat:0 }}%</span>
+                            <span>Всього: {{ credit.total_amount|floatformat:0 }}</span>
+                        </div>
+                        <div class="progress-bar-track">
+                            <div class="progress-bar-fill" style="width: {{ credit.progress_percentage|stringformat:'d' }}%;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-actions">
+                    <button class="btn-action" data-bs-toggle="modal" data-bs-target="#editCreditModal-{{ credit.id }}">
+                        <i class="bi bi-pencil-fill"></i>
+                    </button>
+                    <a href="#" class="btn-action delete">
+                        <i class="bi bi-trash-fill"></i>
+                    </a>
+                </div>
+            </div>
+            {% empty %}
+            <div class="empty-state">
+                <p>У вас немає відкритих кредитів</p>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+</div>
+
+<div class="modal fade" id="addSubscriptionModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content glass-modal">
+            <div class="modal-header border-0">
+                <h5 class="modal-title">Нова підписка</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="post" action="{% url 'add_subscription' %}">
+                {% csrf_token %}
+                <div class="modal-body">
+                    {% for field in subscription_form %}
+                    <div class="mb-3">
+                        <label class="form-label small text-secondary-custom">{{ field.label }}</label>
+                        {{ field }}
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Скасувати</button>
+                    <button type="submit" class="btn btn-primary px-4">Зберегти</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="addCreditModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content glass-modal">
+            <div class="modal-header border-0">
+                <h5 class="modal-title">Новий кредит</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="post" action="{% url 'add_credit' %}">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="row">
+                        {% for field in credit_form %}
+                            <div class="col-12 mb-3">
+                                <label class="form-label small text-secondary-custom">{{ field.label }}</label>
+                                {{ field }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Скасувати</button>
+                    <button type="submit" class="btn btn-primary px-4">Зберегти</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

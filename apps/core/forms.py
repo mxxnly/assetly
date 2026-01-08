@@ -20,6 +20,9 @@ class PortfolioForm(forms.ModelForm):
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control-custom'}),
         }
+        labels = {
+            'name': 'Назва портфоліо',
+        }
 
 class BalanceItemForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):

@@ -181,3 +181,114 @@ body {
         font-size: 0.9rem;
     }
 }
+
+
+/* --- Стилізація Навігації (Navbar) --- */
+
+/* Основна смуга навігації */
+.navbar {
+    background-color: rgba(15, 23, 42, 0.8); /* Трохи менш прозора ніж картки, щоб текст читався */
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 15px 0;
+    transition: all 0.3s ease;
+}
+
+/* Бренд (Логотип) */
+.navbar-brand {
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: var(--text-main) !important;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Посилання в меню */
+.nav-link {
+    color: var(--text-muted) !important;
+    font-weight: 500;
+    font-size: 0.95rem;
+    padding: 8px 16px !important;
+    border-radius: var(--btn-radius);
+    transition: all 0.3s ease;
+}
+
+/* Ефект при наведенні на посилання */
+.nav-link:hover,
+.nav-link:focus,
+.nav-link.active {
+    color: var(--text-main) !important;
+    background-color: rgba(255, 255, 255, 0.05);
+    text-shadow: 0 0 10px var(--accent-glow);
+}
+
+/* --- Випадаюче меню (Dropdown) --- */
+
+/* Сам контейнер випадаючого меню */
+.dropdown-menu {
+    background-color: #0f172a; /* Темний фон, щоб не було прозорості над контентом */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 10px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    margin-top: 15px; /* Відступ від навбару */
+    animation: fadeIn 0.2s ease-in-out;
+}
+
+/* Елементи випадаючого меню */
+.dropdown-item {
+    color: var(--text-muted);
+    padding: 10px 15px;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+/* Наведення на елемент меню */
+.dropdown-item:hover, .dropdown-item:focus {
+    background-color: var(--accent-blue);
+    color: white;
+    transform: translateX(5px); /* Легкий зсув вправо */
+}
+
+/* Розділювач в меню */
+.dropdown-divider {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    margin: 8px 0;
+}
+
+/* Кнопка "мобільного меню" (гамбургер) */
+.navbar-toggler {
+    border-color: rgba(255, 255, 255, 0.1);
+    padding: 8px;
+    border-radius: 8px;
+}
+
+.navbar-toggler:focus {
+    box-shadow: 0 0 0 2px var(--accent-glow);
+}
+
+.navbar-toggler-icon {
+    filter: invert(1); /* Робить іконку білою, якщо вона чорна */
+}
+
+/* Анімація появи меню */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- Виправлення для вашого HTML --- */
+/* У вас посилання "Створити портфоліо" має клас .dropdown-item, 
+   хоча воно в головному меню. Цей стиль це виправить: */
+.navbar-nav .dropdown-item {
+    color: var(--text-muted);
+    background: transparent;
+}
+.navbar-nav .dropdown-item:hover {
+    color: var(--accent-blue);
+    background: transparent;
+}

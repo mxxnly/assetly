@@ -1,0 +1,293 @@
+:root {
+    --glass-bg: rgba(30, 41, 59, 0.6);
+    --glass-modal-bg: #0f172a;
+    --glass-border: 1px solid rgba(255, 255, 255, 0.08);
+    --text-main: #f8fafc;
+    --text-secondary: #94a3b8;
+    --accent-purple: #a855f7;
+    --accent-orange: #f97316;
+    --accent-warning: #fbbf24;
+    --accent-blue: #3b82f6;
+    --card-radius: 20px;
+}
+
+.page-container {
+    padding-top: 20px;
+    padding-bottom: 80px;
+}
+
+.section-block {
+    margin-bottom: 40px;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 0 5px;
+}
+
+.section-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.icon-purple {
+    color: var(--accent-purple);
+    filter: drop-shadow(0 0 8px rgba(168, 85, 247, 0.4));
+}
+
+.icon-orange {
+    color: var(--accent-orange);
+    filter: drop-shadow(0 0 8px rgba(249, 115, 22, 0.4));
+}
+
+.btn-icon-glass {
+    background: rgba(255, 255, 255, 0.05);
+    border: var(--glass-border);
+    color: var(--text-main);
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.btn-icon-glass:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: scale(1.05);
+}
+
+.cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.glass-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: var(--glass-border);
+    border-radius: var(--card-radius);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    transition: transform 0.3s ease;
+}
+
+.glass-card:hover {
+    transform: translateY(-5px);
+    background: rgba(30, 41, 59, 0.8);
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+.card-top {
+    display: flex;
+    gap: 15px;
+    align-items: flex-start;
+}
+
+.icon-box {
+    width: 48px;
+    height: 48px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: var(--text-secondary);
+}
+
+.card-info {
+    flex-grow: 1;
+}
+
+.card-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-main);
+    margin-bottom: 5px;
+}
+
+.cycle-badge {
+    background: rgba(168, 85, 247, 0.15);
+    color: var(--accent-purple);
+    font-size: 0.75rem;
+    padding: 4px 8px;
+    border-radius: 6px;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.bank-name {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.card-main {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.amount-display {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--text-main);
+    font-family: monospace;
+}
+
+.amount-display.text-warning {
+    color: var(--accent-warning);
+    text-shadow: 0 0 15px rgba(251, 191, 36, 0.2);
+}
+
+.currency {
+    font-size: 0.6em;
+    opacity: 0.7;
+}
+
+.next-date {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.label {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    display: block;
+    margin-bottom: 4px;
+}
+
+.progress-container {
+    margin-top: 10px;
+}
+
+.progress-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+}
+
+.progress-bar-track {
+    width: 100%;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent-orange), var(--accent-warning));
+    border-radius: 3px;
+    box-shadow: 0 0 10px rgba(249, 115, 22, 0.5);
+}
+
+.card-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 5px;
+    justify-content: flex-end;
+}
+
+.btn-action {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-secondary);
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    font-size: 0.9rem;
+    text-decoration: none;
+}
+
+.btn-action:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-main);
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+.btn-action.delete:hover {
+    background: rgba(248, 113, 113, 0.1);
+    color: #f87171;
+    border-color: #f87171;
+}
+
+.empty-state {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 30px;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 12px;
+    color: var(--text-secondary);
+    border: 1px dashed rgba(255, 255, 255, 0.1);
+}
+
+.glass-modal {
+    background: var(--glass-modal-bg);
+    background-image: linear-gradient(to bottom, rgba(255,255,255,0.05), rgba(255,255,255,0));
+    border: var(--glass-border);
+    border-radius: 20px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+    color: var(--text-main);
+}
+
+.btn-close-white {
+    filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+.text-secondary-custom {
+    color: var(--text-secondary);
+}
+
+.glass-input {
+    background-color: rgba(255, 255, 255, 0.03) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: var(--text-main) !important;
+    border-radius: 10px;
+    padding: 10px 15px;
+}
+
+.glass-input:focus {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+    border-color: var(--accent-blue) !important;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2) !important;
+    color: white !important;
+    outline: none;
+}
+
+.glass-input option {
+    background-color: #0f172a;
+    color: white;
+    padding: 8px;
+}
+
+@media (max-width: 768px) {
+    .cards-grid {
+        grid-template-columns: 1fr;
+    }
+    .section-title {
+        font-size: 1.25rem;
+    }
+}

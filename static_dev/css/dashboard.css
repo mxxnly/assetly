@@ -1,108 +1,186 @@
-/* --- static/css/dashboard.css --- */
+:root {
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --primary-blue: #3b82f6;
+    --glass-bg: rgba(30, 41, 59, 0.7);
+    --glass-border: 1px solid rgba(255, 255, 255, 0.08);
+    --card-radius: 24px;
+    --glow-color: rgba(59, 130, 246, 0.5);
+}
 
-/* 1. Головний баланс (Велика цифра) */
 .total-wealth-title {
-    font-size: 1.2rem;
+    font-size: 1rem;
     color: var(--text-muted);
-    letter-spacing: 0.5px;
+    letter-spacing: 1.5px;
     text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
 }
 
 .total-wealth-amount {
     font-weight: 800;
-    color: white;
-    /* Неонове світіння тексту */
-    text-shadow: 0 0 25px rgba(59, 130, 246, 0.6);
+    color: var(--text-main);
+    text-shadow: 0 0 30px var(--glow-color);
     margin-top: 0.5rem;
+    line-height: 1.1;
+    letter-spacing: -1px;
 }
 
 .currency-symbol {
     color: var(--text-muted);
-    font-size: 2rem; /* Трохи менше за основну цифру */
-    vertical-align: middle;
+    font-size: 0.5em;
+    vertical-align: top;
+    margin-left: 8px;
+    opacity: 0.8;
 }
 
-/* 2. Картка портфоліо */
 .portfolio-card {
-    /* Наслідує глобальні стилі картки, але можна уточнити тут */
+    background-color: var(--glass-bg);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: var(--glass-border);
+    border-radius: var(--card-radius);
     height: 100%;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    padding: 1.5rem;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease, border-color 0.3s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.portfolio-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+    border-color: rgba(255, 255, 255, 0.2);
 }
 
 .portfolio-title {
-    color: var(--primary-blue); /* Використовуємо змінну з auth.css/main.css */
-    font-weight: 600;
-    letter-spacing: 0.5px;
+    color: var(--text-main);
+    font-weight: 700;
+    font-size: 1.25rem;
+    letter-spacing: 0.3px;
+    margin-bottom: 0;
 }
 
 .portfolio-badge {
-    background-color: rgba(59, 130, 246, 0.2); /* Напівпрозорий синій */
-    color: #fff;
+    background: rgba(59, 130, 246, 0.15);
+    color: var(--primary-blue);
     border: 1px solid rgba(59, 130, 246, 0.3);
-    font-weight: 500;
+    font-weight: 600;
     padding: 6px 12px;
-    border-radius: 8px;
-    backdrop-filter: blur(4px);
+    border-radius: 10px;
+    font-size: 0.9rem;
+    box-shadow: 0 0 10px rgba(59, 130, 246, 0.1);
 }
 
-/* 3. Рядок активу (Asset Item Row) */
+.vstack {
+    flex-grow: 1;
+}
+
 .asset-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 12px;
-    border-radius: 12px;
-    
-    /* Темний напівпрозорий фон замість інлайнового styles */
-    background: rgba(255, 255, 255, 0.03); 
+    padding: 14px 16px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.02);
     border: 1px solid transparent;
-    
+    margin-bottom: 8px;
     transition: all 0.2s ease;
 }
 
-/* Ефект при наведенні на рядок (підсвітка) */
+.asset-item:last-child {
+    margin-bottom: 0;
+}
+
 .asset-item:hover {
-    background: rgba(255, 255, 255, 0.08);
-    border-color: rgba(255, 255, 255, 0.1);
-    transform: translateX(4px); /* Легкий зсув вправо */
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.08);
+    transform: translateX(4px);
 }
 
 .asset-icon {
-    margin-right: 12px;
+    margin-right: 14px;
     font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
 }
 
 .asset-name {
-    color: #e2e8f0;
+    color: var(--text-main);
     font-weight: 500;
+    font-size: 0.95rem;
 }
 
 .asset-value {
     font-weight: 700;
-    color: white;
-    font-family: 'Inter', monospace; /* Щоб цифри були рівними */
+    color: var(--text-main);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 1rem;
+    letter-spacing: -0.5px;
 }
 
-/* 4. Кнопка додавання (Dashed Button) */
 .btn-dashed {
     width: 100%;
-    border: 1px dashed var(--text-muted); /* Пунктирна рамка */
+    border: 2px dashed rgba(255, 255, 255, 0.15);
     color: var(--text-muted);
     background: transparent;
-    padding: 10px;
-    border-radius: 12px;
+    padding: 14px;
+    border-radius: 16px;
     transition: all 0.3s ease;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
 }
 
 .btn-dashed:hover {
     border-color: var(--primary-blue);
     color: var(--primary-blue);
     background: rgba(59, 130, 246, 0.1);
-    box-shadow: 0 0 15px rgba(59, 130, 246, 0.2);
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.15);
+    transform: translateY(-2px);
 }
 
-/* Порожній стан (Empty State) */
 .empty-state-text {
     color: var(--text-muted);
-    margin-bottom: 20px;
+    margin: 2rem 0;
+    font-size: 1.1rem;
+    opacity: 0.8;
+}
+
+@media (max-width: 768px) {
+    .total-wealth-amount {
+        font-size: 2.5rem;
+    }
+
+    .currency-symbol {
+        font-size: 0.4em;
+    }
+
+    .portfolio-card {
+        padding: 1.25rem;
+    }
+
+    .asset-item {
+        padding: 12px;
+    }
+    
+    .asset-name {
+        font-size: 0.9rem;
+    }
+
+    .asset-value {
+        font-size: 0.95rem;
+    }
+
+    .portfolio-badge {
+        font-size: 0.8rem;
+        padding: 4px 8px;
+    }
 }

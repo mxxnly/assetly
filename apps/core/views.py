@@ -10,16 +10,19 @@ from operator import attrgetter
 from django.db.models import Q
 from django.db import transaction
 from django.db.models import F
-
+from apps.subscriptions.models import Credit
 @login_required 
 def home(request):
     portfolios = Portfolio.objects.filter(user=request.user).prefetch_related('items')
 
     total_wealth = BalanceItem.objects.filter(portfolio__user=request.user).aggregate(total=Sum('balance'))['total'] or 0
 
+    total_credits_amount_remaining = Credit.objects.filter(user=request.user).aggregate(total=Sum('remaining_amount'))['total'] or 0
+
     context = {
         'portfolios': portfolios,
         'total_wealth': total_wealth,
+        'total_credits_amount_remaining': total_credits_amount_remaining,
     }
     return render(request, 'pages/home.html', context)
 def portfolio_detail(request, portfolio_id):
@@ -198,3 +201,17 @@ def transfer_add(request, portfolio_id):
         return redirect('portfolio_detail', portfolio_id=portfolio.id)
             
     return redirect('portfolio_detail', portfolio_id=portfolio.id)
+
+
+@login_required
+def create_portfolio(request):
+    if request.method == 'POST':
+        form = PortfolioForm(request.POST)
+        if form.is_valid():
+            portfolio = form.save(commit=False)
+            portfolio.user = request.user
+            portfolio.save()
+            return redirect('portfolio_detail', portfolio_id=portfolio.id)
+    else:
+        form = PortfolioForm()
+    return render(request, 'pages/portfolio_form.html', {'form': form})
