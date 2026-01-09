@@ -11,6 +11,8 @@ from django.db.models import Q
 from django.db import transaction
 from django.db.models import F
 from apps.subscriptions.models import Credit
+from apps.subscriptions.models import Payment
+from django.db import transaction as db_transaction 
 @login_required 
 def home(request):
     portfolios = Portfolio.objects.filter(user=request.user).prefetch_related('items')
@@ -112,19 +114,35 @@ def transaction_add(request, portfolio_id):
     
     return redirect('portfolio_detail', portfolio_id=portfolio.id)
 
+@login_required
 @require_POST
 def transaction_delete(request, pk):
-    transaction = get_object_or_404(Transaction, pk=pk, asset__portfolio__user=request.user)
-    
-    if transaction.type == 'income':
-        transaction.asset.balance -= transaction.amount
-    else:
-        transaction.asset.balance += transaction.amount
-    transaction.asset.save()
-    
-    portfolio_id = transaction.asset.portfolio.id
-    transaction.delete()
-    
+    tx = get_object_or_404(Transaction, pk=pk, asset__portfolio__user=request.user)
+    portfolio_id = tx.asset.portfolio.id
+
+    try:
+        with db_transaction.atomic():
+            if tx.type == 'income':
+                tx.asset.balance -= tx.amount
+            else:
+                tx.asset.balance += tx.amount
+            
+            tx.asset.save()
+
+            payment = Payment.objects.filter(transaction=tx).first()
+
+            if payment:
+                if payment.credit:
+                    payment.credit.remaining_amount += payment.amount
+                    payment.credit.save()
+                
+                payment.delete()
+
+            tx.delete()
+
+    except Exception as e:
+        print(f"Помилка при видаленні: {e}")
+
     return redirect('portfolio_detail', portfolio_id=portfolio_id)
 
 def transaction_update(request, pk):
