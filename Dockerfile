@@ -16,9 +16,9 @@ RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
 COPY . /app/
-COPY entrypoint.sh /app/entrypoint.sh
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 
-# Цей рядок корисний, але docker-compose command його все одно перезапише (і це ок)
-RUN dos2unix /app/entrypoint.sh && chmod +x /app/entrypoint.sh
+# ЗМІНА 2: Виправляємо права саме для цієї копії
+RUN dos2unix /usr/local/bin/entrypoint.sh && chmod +x /usr/local/bin/entrypoint.sh
 
 ENTRYPOINT ["/app/entrypoint.sh"]
