@@ -2,7 +2,7 @@ services:
   web:
     build: .
     # ВАЖЛИВО: Використовуємо entrypoint замість command
-    entrypoint: sh -c "dos2unix /app/entrypoint.sh && /app/entrypoint.sh"
+    entrypoint: sh -c "dos2unix /app/entrypoint.sh && sh /app/entrypoint.sh"
     volumes:
       - .:/app
       - static_volume:/app/static
