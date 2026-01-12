@@ -1,19 +1,65 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Створити категорію{% endblock %}
+{% block title %}Налаштування категорій{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/portfolio_form.css' %}">
+<link rel="stylesheet" href="{% static 'css/category_form.css' %}">
 {% endblock %}
 
 {% block content %}
-<div class="container">
-    <h1 class="mt-4 mb-4">Створити категорію</h1>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-primary">Створити</button>
-    </form>
+<div class="container py-5">
+    <div class="row g-5">
+        <div class="col-lg-4">
+            <div class="glass-form-card">
+                <h3 class="form-title">Нова категорія</h3>
+                
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="form-fields-wrapper">
+                        {{ form.as_p }}
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 mt-3 shadow-lg">
+                        Створити
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-lg-8">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h3 class="text-white fw-bold m-0">Існуючі категорії</h3>
+                <span class="badge bg-white text-dark rounded-pill px-3 py-2">
+                    Всього: {{ categories.count }}
+                </span>
+            </div>
+
+            <div class="row g-3">
+                {% for category in categories %}
+                    <div class="col-6 col-md-4">
+                        <div class="category-card">
+                            <div class="card-actions">
+                                <button class="btn-icon-small edit">✎</button>
+                                <button class="btn-icon-small delete text-danger">✕</button>
+                            </div>
+
+                            <div class="icon-circle bg-{{ category.color|default:'secondary' }}-subtle text-{{ category.color|default:'secondary' }}">
+                                {{ category.icon }}
+                            </div>
+
+                            <h5 class="category-name">{{ category.name }}</h5>
+                        </div>
+                    </div>
+                {% empty %}
+                    <div class="col-12">
+                        <div class="empty-state">
+                            <div class="fs-1 mb-3">🗂️</div>
+                            <p>Список категорій порожній</p>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}

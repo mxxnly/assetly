@@ -1,0 +1,178 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Історія операцій{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/trans_and_pay.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="page-title text-white fw-bold">Історія операцій</h1>
+    </div>
+
+    <form method="get" class="filter-card mb-4">
+        <div class="row g-3 align-items-end">
+            
+            <div class="col-md-4">
+                <label class="filter-label">Рахунки</label>
+                <div class="dropdown">
+                    <button class="btn form-control-custom d-flex justify-content-between align-items-center w-100" 
+                            type="button" 
+                            id="assetsDropdown" 
+                            data-bs-toggle="dropdown" 
+                            data-bs-auto-close="outside" 
+                            aria-expanded="false">
+                        <span id="selectedCount" class="text-truncate">
+                            {% if selected_assets %}
+                                Обрано: {{ selected_assets|length }}
+                            {% else %}
+                                Всі рахунки
+                            {% endif %}
+                        </span>
+                        <span class="small opacity-50">▼</span>
+                    </button>
+
+                    <div class="dropdown-menu glass-dropdown-menu w-100 p-2" aria-labelledby="assetsDropdown">
+                        <div class="assets-list-scroll">
+                            {% for asset in user_assets %}
+                            <div class="form-check custom-checkbox mb-2">
+                                <input class="form-check-input asset-checkbox" 
+                                       type="checkbox" 
+                                       name="assets" 
+                                       value="{{ asset.id }}" 
+                                       id="asset_{{ asset.id }}"
+                                       {% if asset.id in selected_assets %}checked{% endif %}>
+                                <label class="form-check-label text-white small w-100" for="asset_{{ asset.id }}">
+                                    <span style="opacity: 0.6;">{{ asset.portfolio.name }}</span> — {{ asset.get_type_display }}
+                                </label>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <label class="filter-label">З дати</label>
+                <input type="date" name="start_date" class="form-control-custom" value="{{ start_date|default:'' }}">
+            </div>
+
+            <div class="col-md-3">
+                <label class="filter-label">По дату</label>
+                <input type="date" name="end_date" class="form-control-custom" value="{{ end_date|default:'' }}">
+            </div>
+
+            <div class="col-md-2 d-flex gap-2">
+                <button type="submit" class="btn btn-primary w-100">Фільтр</button>
+                <a href="{% url 'stat_transactions' %}" class="btn btn-dashed" title="Скинути">✕</a>
+            </div>
+        </div>
+    </form>
+
+    <div class="row g-4 content-row">
+        
+        <div class="col-lg-7">
+            <div class="glass-card h-100">
+                <div class="card-header">
+                    <h2 class="section-title">Всі транзакції</h2>
+                    <span class="badge-count">{{ transactions.count }}</span>
+                </div>
+                
+                <div class="table-container">
+                    <table class="custom-table">
+                        <thead>
+                            <tr>
+                                <th>Дата</th>
+                                <th>Категорія</th>
+                                <th>Рахунок</th>
+                                <th class="text-end">Сума</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for tx in transactions %}
+                            <tr>
+                                <td class="date-cell">
+                                    <div class="date-main">{{ tx.created_at|date:"d.m" }}</div>
+                                    <div class="date-sub">{{ tx.created_at|date:"H:i" }}</div>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <span class="cat-icon">{{ tx.category.icon|default:"📄" }}</span>
+                                        <span>{{ tx.category.name|default:"Без категорії" }}</span>
+                                    </div>
+                                </td>
+                                <td class="text-muted small">{{ tx.asset.portfolio.name }}</td>
+                                <td class="text-end fw-bold {% if tx.type == 'income' %}text-success{% else %}text-danger{% endif %}">
+                                    {% if tx.type == 'income' %}+{% else %}-{% endif %}{{ tx.amount|floatformat:0 }}
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="4" class="text-center py-5 text-muted">
+                                    Історія порожня
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-5">
+            <div class="glass-card h-100">
+                <div class="card-header">
+                    <h2 class="section-title">Оплати підписок</h2>
+                    <span class="badge-count">{{ payments.count }}</span>
+                </div>
+
+                <div class="payment-list">
+                    {% for pay in payments %}
+                    <div class="payment-item">
+                        <div class="payment-icon">
+                            {{ pay.subscription.icon|default:"🔄" }}
+                        </div>
+                        <div class="payment-info">
+                            <h5 class="payment-title">{{ pay.subscription.name }}</h5>
+                            <span class="payment-date">{{ pay.created_at|date:"d E Y" }}</span>
+                        </div>
+                        <div class="payment-amount">
+                            -{{ pay.amount|floatformat:0 }} {{ pay.subscription.currency }}
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="text-center py-5 text-muted">
+                        Оплат підписок ще не було
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const checkboxes = document.querySelectorAll('.asset-checkbox');
+        const countLabel = document.getElementById('selectedCount');
+
+        function updateCount() {
+            const checkedCount = document.querySelectorAll('.asset-checkbox:checked').length;
+            if (checkedCount === 0) {
+                countLabel.textContent = 'Всі рахунки';
+            } else {
+                countLabel.textContent = `Обрано: ${checkedCount}`;
+            }
+        }
+
+        checkboxes.forEach(cb => {
+            cb.addEventListener('change', updateCount);
+        });
+    });
+</script>
+{% endblock %}

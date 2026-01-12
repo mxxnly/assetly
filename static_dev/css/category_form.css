@@ -1,0 +1,143 @@
+.glass-form-card {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 2rem;
+    position: sticky;
+    top: 100px;
+}
+
+.form-title {
+    color: white;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.form-fields-wrapper p {
+    margin-bottom: 1.2rem;
+}
+
+.form-fields-wrapper label {
+    display: block;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+
+.form-fields-wrapper input[type="text"],
+.form-fields-wrapper select {
+    width: 100%;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 10px 15px;
+    color: white;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.form-fields-wrapper input[type="text"]:focus,
+.form-fields-wrapper select:focus {
+    background: rgba(0, 0, 0, 0.4);
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+.category-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem 1rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    height: 100%;
+}
+
+.category-card:hover {
+    background: rgba(255, 255, 255, 0.08);
+    transform: translateY(-5px);
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.icon-circle {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    transition: transform 0.3s ease;
+}
+
+.category-card:hover .icon-circle {
+    transform: scale(1.15) rotate(5deg);
+}
+
+.category-name {
+    color: #f1f5f9;
+    font-size: 1rem;
+    font-weight: 600;
+    text-align: center;
+    margin: 0;
+    letter-spacing: 0.5px;
+}
+
+.card-actions {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    display: flex;
+    gap: 4px;
+    opacity: 0;
+    transform: translateY(-5px);
+    transition: all 0.2s ease;
+}
+
+.category-card:hover .card-actions {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.btn-icon-small {
+    background: rgba(0, 0, 0, 0.4);
+    border: none;
+    color: rgba(255, 255, 255, 0.8);
+    width: 24px;
+    height: 24px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-icon-small:hover {
+    background: white;
+    color: black;
+}
+
+.btn-icon-small.delete:hover {
+    background: #ef4444;
+    color: white;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 3rem;
+    color: rgba(255, 255, 255, 0.5);
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 16px;
+    border: 1px dashed rgba(255, 255, 255, 0.1);
+}

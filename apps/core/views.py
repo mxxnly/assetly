@@ -238,6 +238,7 @@ def create_portfolio(request):
 
 @login_required
 def create_category(request):
+    categories = Category.objects.all()
     if request.method == 'POST':
         form = CategoryForm(request.POST)
         if form.is_valid():
@@ -245,4 +246,4 @@ def create_category(request):
             return redirect('home')
     else:
         form = CategoryForm()
-    return render(request, 'pages/category_form.html', {'form': form})
+    return render(request, 'pages/category_form.html', {'form': form, 'categories': categories})

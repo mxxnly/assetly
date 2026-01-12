@@ -13,7 +13,6 @@
     --input-bg: rgba(255, 255, 255, 0.03); /* Фон для полів вводу */
 }
 
-/* Додаємо фон для всієї сторінки, щоб "скло" виглядало ефектно */
 body {
     background-color: var(--bg-body);
     color: var(--text-main);
@@ -21,20 +20,18 @@ body {
     min-height: 100vh;
 }
 
-/* Контейнер форми */
-.container form {
+#portfolio-form {
     background-color: var(--glass-bg);
-    backdrop-filter: blur(var(--glass-blur)); /* Ефект розмиття фону */
-    -webkit-backdrop-filter: blur(var(--glass-blur)); /* Для Safari */
+    backdrop-filter: blur(var(--glass-blur)); 
+    -webkit-backdrop-filter: blur(var(--glass-blur)); 
     padding: 40px;
     border-radius: var(--card-radius);
     border: var(--glass-border);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3); /* Глибша тінь для темної теми */
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3); 
     max-width: 700px;
     margin: 40px auto;
 }
 
-/* Заголовок */
 h1 {
     text-align: center;
     color: var(--text-main);
@@ -43,70 +40,63 @@ h1 {
     text-shadow: 0 2px 10px rgba(0,0,0,0.5);
 }
 
-/* Обгортки полів */
-form p {
+#portfolio-form p {
     margin-bottom: 24px;
     display: flex;
     flex-direction: column;
 }
 
-/* Підписи (Labels) */
-form label {
+#portfolio-form label {
     font-weight: 500;
     margin-bottom: 10px;
-    color: var(--text-main); /* Білий текст замість сірого */
+    color: var(--text-main); 
     font-size: 0.95rem;
     letter-spacing: 0.5px;
 }
 
-/* Стилізація полів вводу */
-form input[type="text"],
-form input[type="email"],
-form input[type="url"],
-form input[type="password"],
-form input[type="number"],
-form select,
-form textarea {
+#portfolio-form input[type="text"],
+#portfolio-form input[type="email"],
+#portfolio-form input[type="url"],
+#portfolio-form input[type="password"],
+#portfolio-form input[type="number"],
+#portfolio-form select,
+#portfolio-form textarea {
     width: 100%;
     padding: 14px 18px;
     border: var(--glass-border);
     border-radius: var(--btn-radius);
     font-size: 1rem;
-    background-color: var(--input-bg); /* Прозорий темний фон */
-    color: var(--text-main); /* Білий текст вводу */
+    background-color: var(--input-bg); 
+    color: var(--text-main); 
     transition: all 0.3s ease;
     box-sizing: border-box;
 }
 
-/* Placeholder (текст-підказка) */
-form input::placeholder,
-form textarea::placeholder {
+#portfolio-form input::placeholder,
+#portfolio-form textarea::placeholder {
     color: var(--text-muted);
     opacity: 0.7;
 }
 
-/* Ефект при натисканні на поле */
-form input:focus,
-form select:focus,
-form textarea:focus {
+#portfolio-form input:focus,
+#portfolio-form select:focus,
+#portfolio-form textarea:focus {
     border-color: var(--accent-blue);
-    background-color: rgba(59, 130, 246, 0.1); /* Легкий синій відтінок */
+    background-color: rgba(59, 130, 246, 0.1); 
     outline: none;
-    box-shadow: 0 0 0 4px var(--accent-glow); /* Світіння */
+    box-shadow: 0 0 0 4px var(--accent-glow); 
 }
 
-/* Textarea */
-form textarea {
+#portfolio-form textarea {
     min-height: 120px;
     resize: vertical;
 }
 
-/* Файл (File Input) - робимо його красивим */
-form input[type="file"] {
+#portfolio-form input[type="file"] {
     padding: 10px 0;
     color: var(--text-muted);
 }
-form input[type="file"]::file-selector-button {
+#portfolio-form input[type="file"]::file-selector-button {
     background-color: var(--input-bg);
     color: var(--text-main);
     border: var(--glass-border);
@@ -116,20 +106,18 @@ form input[type="file"]::file-selector-button {
     cursor: pointer;
     transition: all 0.3s;
 }
-form input[type="file"]::file-selector-button:hover {
+#portfolio-form input[type="file"]::file-selector-button:hover {
     background-color: var(--accent-blue);
     border-color: var(--accent-blue);
 }
 
-/* Допоміжний текст */
 .helptext {
     font-size: 0.85rem;
     color: var(--text-muted); /* Світло-сірий */
     margin-top: 8px;
 }
 
-/* Кнопка "Створити" */
-form button[type="submit"] {
+#portfolio-form button[type="submit"] {
     width: 100%;
     padding: 16px;
     font-size: 1.1rem;
@@ -140,22 +128,22 @@ form button[type="submit"] {
     border-radius: var(--btn-radius);
     background-color: var(--accent-blue);
     color: #fff;
-    box-shadow: 0 4px 20px var(--accent-glow); /* Кнопка світиться */
+    box-shadow: 0 4px 20px var(--accent-glow); 
     transition: all 0.3s ease;
 }
 
-form button[type="submit"]:hover {
+#portfolio-form button[type="submit"]:hover {
     background-color: var(--accent-hover);
     transform: translateY(-2px);
     box-shadow: 0 6px 25px var(--accent-glow);
 }
 
-form button[type="submit"]:active {
+#portfolio-form button[type="submit"]:active {
     transform: translateY(0);
 }
 
 /* Чекбокси */
-form input[type="checkbox"] {
+#portfolio-form input[type="checkbox"] {
     width: 20px;
     height: 20px;
     accent-color: var(--accent-blue);

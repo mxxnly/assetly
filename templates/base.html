@@ -16,62 +16,99 @@
 </head>
 <body class="d-flex flex-column min-vh-100">
 
+    
     <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
-        <div class="container">
-            <a class="navbar-brand" href="{% url 'home' %}">
-                <span style="color: #3b82f6;">◆</span> Assetly
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+    <div class="container">
+        <a class="navbar-brand" href="{% url 'home' %}">
+            <span style="color: #3b82f6;">◆</span> Assetly
+        </a>
+        
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-            <div class="collapse navbar-collapse" id="navbarContent">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    {% if user.is_authenticated %}
-                    <li class="nav-item">
-                        <a href="{% url 'create_portfolio' %}" class="nav-link">Створити портфоліо</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{% url 'debt_list' %}" class="nav-link">Список боргів</a>
-                    </li>
-                     <li class="nav-item">
-                        <a href="{% url 'subscriptions_and_credits' %}" class="nav-link">Підписки та Кредити</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{% url 'run_payments' %}" class="nav-link">Обробка підписок</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{% url 'create_category' %}" class="nav-link">Створити категорію</a>
-                    </li>
-                    {% endif %}
-                </ul>
-
-                <ul class="navbar-nav ms-auto">
-                    {% if user.is_authenticated %}
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                                {{ user.first_name|default:user.email }}
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-end">
-                                <li><a class="dropdown-item" href="#">Профіль</a></li>
-                                <li><hr class="dropdown-divider bg-secondary"></li>
-                                <li>
-                                    <form action="{% url 'logout' %}" method="post">
-                                        {% csrf_token %}
-                                        <button type="submit" class="dropdown-item text-danger">Вийти</button>
-                                    </form>
-                                </li>
-                            </ul>
+        <div class="collapse navbar-collapse" id="navbarContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                {% if user.is_authenticated %}
+                
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                        Фінанси
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a class="dropdown-item" href="{% url 'home' %}">Портфоліо</a>
                         </li>
-                    {% else %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'login' %}">Вхід</a>
-                        </li>                        
-                    {% endif %}
-                </ul>
-            </div>
+                        <li>
+                            <a class="dropdown-item" href="{% url 'subscriptions_and_credits' %}">Підписки та Кредити</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{% url 'debt_list' %}">Борги</a>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <a class="dropdown-item" href="{% url 'create_portfolio' %}">Додати Портфоліо</a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                        Статистика
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a class="dropdown-item" href="{% url 'stat_by_category' %}">Статистика за категоріями</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{% url 'stat_transactions' %}">Транзакції і оплати</a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                        Налаштування
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a class="dropdown-item" href="{% url 'create_category' %}">Створити категорію</a>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <a class="dropdown-item" href="{% url 'run_payments' %}">🔄 Оновити підписки</a>
+                        </li>
+                    </ul>
+                </li>
+                {% endif %}
+            </ul>
+
+            <ul class="navbar-nav ms-auto">
+                {% if user.is_authenticated %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            {{ user.first_name|default:user.email }}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="#">Профіль</a></li>
+                            <li><hr class="dropdown-divider bg-secondary"></li>
+                            <li>
+                                <form action="{% url 'logout' %}" method="post">
+                                    {% csrf_token %}
+                                    <button type="submit" class="dropdown-item text-danger">Вийти</button>
+                                </form>
+                            </li>
+                        </ul>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'login' %}">Вхід</a>
+                    </li>                        
+                {% endif %}
+            </ul>
         </div>
-    </nav>
+    </div>
+</nav>
 
     <div class="pt-5 mt-5"></div>
 

@@ -61,7 +61,6 @@ class Transaction(models.Model):
         ('income', 'Дохід'),
     ]
     
-    # Зв'язки
     asset = models.ForeignKey('BalanceItem', on_delete=models.CASCADE, related_name='transactions', verbose_name="Рахунок")
     
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True, related_name='transactions', verbose_name="Категорія")

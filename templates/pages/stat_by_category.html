@@ -1,0 +1,153 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Статистика за категоріями{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/stat_by_category.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    
+    <div class="header-section">
+        <div>
+            <h1 class="page-title">Фінансова статистика</h1>
+            <p class="text-muted">Детальний аналіз доходів та витрат</p>
+        </div>
+        <div class="total-badge">
+            Категорій: {{ data|length }}
+        </div>
+    </div>
+
+    <form method="get" class="filter-card mb-5">
+        <div class="row g-3 align-items-end">
+            
+            <div class="col-md-4">
+                <label class="filter-label">Рахунки (Assets)</label>
+                <div class="dropdown">
+                    <button class="btn form-control-custom d-flex justify-content-between align-items-center w-100" 
+                            type="button" 
+                            id="assetsDropdown" 
+                            data-bs-toggle="dropdown" 
+                            data-bs-auto-close="outside" 
+                            aria-expanded="false">
+                        <span id="selectedCount" class="text-truncate">
+                            {% if selected_assets %}
+                                Обрано: {{ selected_assets|length }}
+                            {% else %}
+                                Всі рахунки
+                            {% endif %}
+                        </span>
+                        <span class="small opacity-50">▼</span>
+                    </button>
+
+                    <div class="dropdown-menu glass-dropdown-menu w-100 p-2" aria-labelledby="assetsDropdown">
+                        <div class="assets-list-scroll">
+                            {% for asset in user_assets %}
+                            <div class="form-check custom-checkbox mb-2">
+                                <input class="form-check-input asset-checkbox" 
+                                       type="checkbox" 
+                                       name="assets" 
+                                       value="{{ asset.id }}" 
+                                       id="asset_{{ asset.id }}"
+                                       {% if asset.id in selected_assets %}checked{% endif %}>
+                                <label class="form-check-label text-white small w-100" for="asset_{{ asset.id }}">
+                                    <span style="opacity: 0.6;">{{ asset.portfolio.name }}</span> — {{ asset.get_type_display }}
+                                </label>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <label class="filter-label">З дати</label>
+                <input type="date" name="start_date" class="form-control-custom" value="{{ start_date|default:'' }}">
+            </div>
+
+            <div class="col-md-3">
+                <label class="filter-label">По дату</label>
+                <input type="date" name="end_date" class="form-control-custom" value="{{ end_date|default:'' }}">
+            </div>
+
+            <div class="col-md-2 d-flex gap-2">
+                <button type="submit" class="btn btn-primary w-100">Фільтр</button>
+                <a href="{% url 'stat_by_category' %}" class="btn btn-dashed" title="Скинути">✕</a>
+            </div>
+        </div>
+    </form>
+
+    <div class="stats-grid">
+        {% for item in data %}
+        <div class="stat-card">
+            <div class="card-header">
+                <div class="icon-circle bg-{{ item.color|default:'primary' }}-subtle text-{{ item.color|default:'primary' }}">
+                    {{ item.icon|default:'📊' }}
+                </div>
+                <h3 class="category-title">{{ item.name }}</h3>
+            </div>
+
+            <div class="card-body">
+                <div class="stat-row">
+                    <span class="label">Дохід</span>
+                    <span class="value text-success">
+                        +{{ item.income|floatformat:2 }} ₴
+                    </span>
+                </div>
+                <div class="stat-row">
+                    <span class="label">Витрати</span>
+                    <span class="value text-danger">
+                        -{{ item.expense|floatformat:2 }} ₴
+                    </span>
+                </div>
+                
+                <div class="divider"></div>
+
+                <div class="stat-row total">
+                    <span class="label">Різниця</span>
+                    <span class="value {% if item.difference >= 0 %}text-success{% else %}text-danger{% endif %}">
+                        {{ item.difference|floatformat:2 }} ₴
+                    </span>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                {% if item.income > 0 or item.expense > 0 %}
+                    <div class="progress-container">
+                        <div class="bar income" style="flex: {{ item.income }};" title="Дохід: {{ item.income|floatformat:0 }}"></div>
+                        <div class="bar expense" style="flex: {{ item.expense }};" title="Витрати: {{ item.expense|floatformat:0 }}"></div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        {% empty %}
+        <div class="empty-state">
+            <div class="empty-icon">📂</div>
+            <p>За обраний період руху коштів не було</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const checkboxes = document.querySelectorAll('.asset-checkbox');
+        const countLabel = document.getElementById('selectedCount');
+
+        function updateCount() {
+            const checkedCount = document.querySelectorAll('.asset-checkbox:checked').length;
+            if (checkedCount === 0) {
+                countLabel.textContent = 'Всі рахунки';
+            } else {
+                countLabel.textContent = `Обрано: ${checkedCount}`;
+            }
+        }
+
+        checkboxes.forEach(cb => {
+            cb.addEventListener('change', updateCount);
+        });
+    });
+</script>
+{% endblock %}

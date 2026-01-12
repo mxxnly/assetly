@@ -10,7 +10,7 @@
 {% block content %}
 <div class="container">
     <h1 class="mt-4 mb-4">Створити портфоліо</h1>
-    <form method="post">
+    <form method="post" id="portfolio-form">
         {% csrf_token %}
         {{ form.as_p }}
         <button type="submit" class="btn btn-primary">Створити</button>
